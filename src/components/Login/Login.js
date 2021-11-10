@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
@@ -14,7 +14,7 @@ const emailReducer = (state, action) => {
     return { value: state.value, isValid: state.value.includes("@") };
   }
 
-  return { value: "", isValid: null };
+  return { value: "", isValid: false };
 };
 
 const passwordReducer = (state, action) => {
@@ -25,7 +25,7 @@ const passwordReducer = (state, action) => {
     return { value: state.value, isValid: state.value.trim().length > 6 };
   }
 
-  return { value: "", isValid: null };
+  return { value: "", isValid: false };
 };
 
 const Login = (props) => {
@@ -37,12 +37,12 @@ const Login = (props) => {
 
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
-    isValid: false,
+    isValid: null,
   });
 
   const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
     value: "",
-    isValid: false,
+    isValid: null,
   });
 
   // useEffect(() => {
@@ -56,24 +56,24 @@ const Login = (props) => {
   // useEffect is a hook to handle side effect!
   // sideEffect are http, listen keystroke, etc. => trigger
   // checking and response can be use for side effect.
-  // useEffect(() => {
-  //   // this happen for every keystoke if have a http request in this will have network traffic
-  //   // use setTimeOut, wait for xxx ms to execute function
-  //   const indentifier = setTimeout(() => {
-  //     console.log("Checking form validity!");
-  //     setFormIsValid(
-  //       enteredEmail.includes("@") && enteredPassword.trim().length > 6
-  //     );
-  //   }, 500);
+  useEffect(() => {
+    // this happen for every keystoke if have a http request in this will have network traffic
+    // use setTimeOut, wait for xxx ms to execute function
+    const indentifier = setTimeout(() => {
+      console.log("Checking form validity!");
+      setFormIsValid(
+        emailState.isValid && passwordState.isValid
+      );
+    }, 500);
 
-  //   // clean up process function
-  //   // when ever this useEffect run, before it runs (except the very first time)
-  //   // this cleanup function will runs when ever the component unmount from the dom (re-run)
-  //   return () => {
-  //     console.log("Clean up");
-  //     clearTimeout(indentifier);
-  //   };
-  // }, [enteredEmail, enteredPassword]);
+    // clean up process function
+    // when ever this useEffect run, before it runs (except the very first time)
+    // this cleanup function will runs when ever the component unmount from the dom (re-run)
+    return () => {
+      console.log("Clean up");
+      clearTimeout(indentifier);
+    };
+  }, [emailState, passwordState]);
   // this tell that will rerun this function if the function or 2 variable changed
   // Function was pre define so no need to put any function
   // So no need to have multiple duplicle logic code
@@ -82,7 +82,7 @@ const Login = (props) => {
     // setEnteredEmail(event.target.value);
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
 
-    setFormIsValid(emailState.isValid && passwordState.isValid);
+    // setFormIsValid(emailState.isValid && passwordState.isValid);
   };
 
   const passwordChangeHandler = (event) => {
@@ -90,7 +90,7 @@ const Login = (props) => {
     dispatchPassword({ type: "USER_INPUT", val: event.target.value });
 
     // should use function forms not like this that depend on last snapshot that may not update
-    setFormIsValid(passwordState.isValid && emailState.isValid);
+    // setFormIsValid(passwordState.isValid && emailState.isValid);
   };
 
   const validateEmailHandler = () => {
