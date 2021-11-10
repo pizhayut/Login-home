@@ -53,6 +53,13 @@ const Login = (props) => {
   //   };
   // });
 
+  // useEffect dependency of emailState and passwordState where we need only isValid
+  // making useEffect been called too many times then needed
+  // so use this object destructuring = alias assignment (left side of equal sign(=) )
+  // can use with props that has a lot of argruments
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
+
   // useEffect is a hook to handle side effect!
   // sideEffect are http, listen keystroke, etc. => trigger
   // checking and response can be use for side effect.
@@ -61,9 +68,7 @@ const Login = (props) => {
     // use setTimeOut, wait for xxx ms to execute function
     const indentifier = setTimeout(() => {
       console.log("Checking form validity!");
-      setFormIsValid(
-        emailState.isValid && passwordState.isValid
-      );
+      setFormIsValid(emailIsValid && passwordIsValid);
     }, 500);
 
     // clean up process function
@@ -73,7 +78,7 @@ const Login = (props) => {
       console.log("Clean up");
       clearTimeout(indentifier);
     };
-  }, [emailState, passwordState]);
+  }, [emailIsValid, passwordIsValid]);
   // this tell that will rerun this function if the function or 2 variable changed
   // Function was pre define so no need to put any function
   // So no need to have multiple duplicle logic code
